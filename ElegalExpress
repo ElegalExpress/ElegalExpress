@@ -1,0 +1,251 @@
+"use client";
+import React, { useState, useEffect } from "react";
+import Footer1 from "../components/footer-1";
+import Header1 from "../components/header-1";
+
+function MainComponent() {
+  const [templates, setTemplates] = useState([]);
+  const [posts, setPosts] = useState([]);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [templatesResponse, postsResponse] = await Promise.all([
+          fetch("/api/templates/list", { method: "POST" }),
+          fetch("/api/blog/list", { method: "POST" }),
+        ]);
+
+        if (!templatesResponse.ok || !postsResponse.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const templatesData = await templatesResponse.json();
+        const postsData = await postsResponse.json();
+
+        setTemplates(templatesData.templates?.slice(0, 3) || []);
+        setPosts(postsData.posts?.slice(0, 3) || []);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load content");
+      }
+    }
+    fetchData();
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Header1 />
+
+      <main>
+        <section className="bg-[#0A192F] text-white py-24">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <img
+                src="https://ucarecdn.com/dfb67f74-8283-40d0-9c5b-1b7c5f720fc2/-/format/auto/"
+                alt="ELegal Express Logo"
+                className="h-24 mx-auto mb-8"
+              />
+              <h1 className="text-4xl md:text-6xl font-bold font-inter mb-6">
+                Expert Legal Solutions Made Simple
+              </h1>
+              <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+                Professional legal services and document templates for
+                businesses in Uganda
+              </p>
+              <div className="flex justify-center gap-4">
+                <a
+                  href="/book-consultation"
+                  className="bg-white text-[#0A192F] px-8 py-4 rounded-md font-bold hover:bg-gray-100 transition-colors"
+                >
+                  Book Consultation
+                </a>
+                <a
+                  href="/templates"
+                  className="border-2 border-white px-8 py-4 rounded-md font-bold hover:bg-white hover:text-[#0A192F] transition-colors"
+                >
+                  Browse Templates
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="py-16 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold font-inter text-[#0A192F] mb-4">
+                About Us
+              </h2>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                With over 10 years of experience in Ugandan law, we provide
+                expert legal services and document solutions for businesses of
+                all sizes.
+              </p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="text-center p-6">
+                <div className="text-[#0A192F] text-4xl mb-4">
+                  <i className="fas fa-balance-scale"></i>
+                </div>
+                <h3 className="font-semibold text-xl mb-2">Legal Expertise</h3>
+                <p className="text-gray-600">
+                  Certified legal professionals with extensive experience in
+                  business law
+                </p>
+              </div>
+              <div className="text-center p-6">
+                <div className="text-[#0A192F] text-4xl mb-4">
+                  <i className="fas fa-certificate"></i>
+                </div>
+                <h3 className="font-semibold text-xl mb-2">
+                  Certified Practice
+                </h3>
+                <p className="text-gray-600">
+                  Licensed by the Uganda Law Society and other relevant
+                  authorities
+                </p>
+              </div>
+              <div className="text-center p-6">
+                <div className="text-[#0A192F] text-4xl mb-4">
+                  <i className="fas fa-handshake"></i>
+                </div>
+                <h3 className="font-semibold text-xl mb-2">Client Focus</h3>
+                <p className="text-gray-600">
+                  Dedicated to providing personalized solutions for your legal
+                  needs
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="py-16 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl font-bold font-inter text-center text-[#0A192F] mb-12">
+              Featured Legal Services
+            </h2>
+            <div className="grid md:grid-cols-3 gap-8">
+              {templates.map((template, index) => (
+                <div
+                  key={index}
+                  className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow border-t-4 border-[#0A192F]"
+                >
+                  <div className="text-[#0A192F] text-3xl mb-4">
+                    <i className="fas fa-file-contract"></i>
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">
+                    {template.title}
+                  </h3>
+                  <p className="text-gray-600 mb-4">{template.description}</p>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[#0A192F] font-bold">
+                      UGX {template.price.toLocaleString()}
+                    </span>
+                    <a
+                      href={`/templates/${template.id}`}
+                      className="text-white bg-[#0A192F] px-4 py-2 rounded-md hover:bg-[#172A46] transition-colors"
+                    >
+                      Learn More
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="py-16 bg-[#0A192F] text-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold font-inter mb-4">
+                Why Trust Us
+              </h2>
+              <p className="text-gray-300 max-w-2xl mx-auto">
+                With over a decade of experience and recognition from the Uganda
+                Law Society, we deliver excellence in every legal service
+              </p>
+            </div>
+            <div className="grid md:grid-cols-4 gap-8">
+              <div className="bg-white/10 p-6 rounded-lg text-center">
+                <div className="text-4xl mb-4">
+                  <i className="fas fa-certificate"></i>
+                </div>
+                <h3 className="font-semibold mb-2">Certified Experts</h3>
+                <p className="text-gray-300">Licensed legal professionals</p>
+              </div>
+              <div className="bg-white/10 p-6 rounded-lg text-center">
+                <div className="text-4xl mb-4">
+                  <i className="fas fa-clock"></i>
+                </div>
+                <h3 className="font-semibold mb-2">10+ Years</h3>
+                <p className="text-gray-300">Of legal experience</p>
+              </div>
+              <div className="bg-white/10 p-6 rounded-lg text-center">
+                <div className="text-4xl mb-4">
+                  <i className="fas fa-users"></i>
+                </div>
+                <h3 className="font-semibold mb-2">500+ Clients</h3>
+                <p className="text-gray-300">Successfully served</p>
+              </div>
+              <div className="bg-white/10 p-6 rounded-lg text-center">
+                <div className="text-4xl mb-4">
+                  <i className="fas fa-star"></i>
+                </div>
+                <h3 className="font-semibold mb-2">5-Star Rated</h3>
+                <p className="text-gray-300">Client satisfaction</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="py-16 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl font-bold font-inter text-center text-[#0A192F] mb-12">
+              Latest Legal Updates
+            </h2>
+            <div className="grid md:grid-cols-3 gap-8">
+              {posts.map((post, index) => (
+                <div key={index} className="bg-gray-50 rounded-lg p-6">
+                  <h3 className="text-xl font-semibold mb-2">{post.title}</h3>
+                  <p className="text-gray-600 mb-4">
+                    {post.content.substring(0, 150)}...
+                  </p>
+                  <a
+                    href={`/blog/${post.id}`}
+                    className="text-[#0A192F] hover:underline"
+                  >
+                    Read More
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="py-16 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="bg-[#0A192F] text-white rounded-lg p-8 text-center">
+              <h2 className="text-3xl font-bold font-inter mb-4">
+                Ready to Get Started?
+              </h2>
+              <p className="text-xl text-gray-300 mb-8">
+                Book a consultation with our legal experts today
+              </p>
+              <a
+                href="/book-consultation"
+                className="bg-white text-[#0A192F] px-8 py-3 rounded-md font-bold hover:bg-gray-100 transition-colors"
+              >
+                Book Your Consultation
+              </a>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <Footer1 />
+    </div>
+  );
+}
+
+export default MainComponent;
